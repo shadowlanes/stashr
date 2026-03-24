@@ -28,8 +28,10 @@ export const clerkPlugin = fp(async (app: FastifyInstance) => {
     const token = authHeader.slice(7);
 
     try {
+      const parties = app.config.clerk.authorizedParties;
       const payload = await verifyToken(token, {
         secretKey: app.config.clerk.secretKey,
+        ...(parties.length > 0 ? { authorizedParties: parties } : {}),
       });
 
       const clerkUserId = payload.sub;

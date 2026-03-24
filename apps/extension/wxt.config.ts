@@ -8,7 +8,7 @@ export default defineConfig({
     name: 'Stashr',
     description: 'Save articles to your Stashr reading list',
     version: '0.0.1',
-    permissions: ['activeTab', 'storage', 'scripting'],
+    permissions: ['activeTab', 'storage', 'scripting', 'cookies'],
     host_permissions: ['<all_urls>'],
     action: {
       default_popup: 'popup.html',

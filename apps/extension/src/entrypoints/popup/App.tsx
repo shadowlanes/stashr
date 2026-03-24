@@ -156,8 +156,16 @@ export default function App() {
       return;
     }
 
-    // Auto-parse on open
-    setState({ status: 'parsing' });
+    // Only auto-parse on initial load, not on subsequent auth state changes
+    setState((prev) => {
+      if (prev.status !== 'loading') return prev;
+      return { status: 'parsing' };
+    });
+  }, [isLoaded, isSignedIn]);
+
+  useEffect(() => {
+    if (state.status !== 'parsing') return;
+
     getActiveTab()
       .then(async (tab) => {
         const article = await parseActiveTab(tab.id!);
@@ -173,7 +181,7 @@ export default function App() {
       .catch((err: unknown) =>
         setState({ status: 'error', message: err instanceof Error ? err.message : 'Unknown error' }),
       );
-  }, [isLoaded, isSignedIn, getToken]);
+  }, [state.status]);
 
   const handleSave = async () => {
     if (state.status !== 'preview') return;

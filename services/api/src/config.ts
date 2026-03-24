@@ -10,6 +10,7 @@ export interface AppConfig {
   clerk: {
     secretKey: string;
     publishableKey: string;
+    authorizedParties: string[];
   };
   r2: {
     accountId: string;
@@ -27,6 +28,10 @@ export function loadConfig(): AppConfig {
     clerk: {
       secretKey: requireEnv('CLERK_SECRET_KEY'),
       publishableKey: requireEnv('CLERK_PUBLISHABLE_KEY'),
+      authorizedParties: (process.env['CLERK_AUTHORIZED_PARTIES'] ?? '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
     },
     r2: {
       accountId: requireEnv('R2_ACCOUNT_ID'),
