@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "4102:5432"
+    environment:
+      POSTGRES_USER: stashr
+      POSTGRES_PASSWORD: stashr
+      POSTGRES_DB: stashr
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stashr -d stashr"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4101:4101"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - services/api/.env
+    volumes:
+      # Hot reload: mount source so tsx watch picks up changes
+      - ./services/api/src:/app/services/api/src
+      - ./packages/db/src:/app/packages/db/src
+    working_dir: /app
+
+  migrate:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - services/api/.env
+    command: ["pnpm", "--filter", "@stashr/db", "migrate"]
+    working_dir: /app
+    profiles:
+      - migrate
+
+volumes:
+  pgdata:

@@ -1,0 +1,21 @@
+{
+  "name": "stashr",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev:api": "docker-compose up",
+    "dev:web": "pnpm --filter web dev",
+    "dev:extension": "pnpm --filter extension dev",
+    "db:migrate": "pnpm --filter @stashr/db migrate",
+    "db:generate": "pnpm --filter @stashr/db generate"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@clerk/shared"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@stashr/db",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx src/migrate.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.31.2",
+    "postgres": "^3.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "drizzle-kit": "^0.22.7",
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5"
+  }
+}

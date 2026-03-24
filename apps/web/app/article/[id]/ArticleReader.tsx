@@ -1,0 +1,127 @@
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import Link from 'next/link';
+import DOMPurify from 'dompurify';
+import { ApiClient } from '@/lib/api';
+import type { Bookmark } from '@/types';
+
+interface ArticleReaderProps {
+  id: string;
+}
+
+export function ArticleReader({ id }: ArticleReaderProps) {
+  const { getToken } = useAuth();
+  const [bookmark, setBookmark] = useState<Bookmark | null>(null);
+  const [content, setContent] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    const token = await getToken();
+    if (!token) return;
+    const client = new ApiClient(token);
+
+    const [bookmarkData, html] = await Promise.all([
+      client.getBookmark(id),
+      client.getBookmarkContent(id).catch(() => null),
+    ]);
+
+    setBookmark(bookmarkData);
+    if (html) setContent(DOMPurify.sanitize(html));
+
+    // Mark as read
+    if (!bookmarkData.isRead) {
+      await client.updateBookmark(id, { isRead: true }).catch(() => null);
+    }
+  }, [getToken, id]);
+
+  useEffect(() => {
+    setLoading(true);
+    load()
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Failed to load'))
+      .finally(() => setLoading(false));
+  }, [load]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-neutral-500 text-sm">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error || !bookmark) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-red-400 text-sm">{error ?? 'Article not found'}</p>
+        <Link href="/" className="text-sm text-neutral-400 hover:text-white">
+          ← Back to reading list
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      {/* Top bar */}
+      <header className="border-b border-neutral-800 bg-neutral-950 sticky top-0 z-10">
+        <div className="max-w-3xl mx-auto px-4 h-12 flex items-center gap-4">
+          <Link href="/" className="text-sm text-neutral-400 hover:text-white transition-colors">
+            ← Back
+          </Link>
+          <span className="text-neutral-600 text-sm truncate">{bookmark.domain ?? bookmark.url}</span>
+          <a
+            href={bookmark.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto text-xs text-neutral-500 hover:text-white transition-colors"
+          >
+            Original ↗
+          </a>
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-4 py-12">
+        {/* Article header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold leading-tight text-white mb-3">
+            {bookmark.title ?? bookmark.url}
+          </h1>
+          <div className="flex items-center gap-3 text-sm text-neutral-500">
+            {bookmark.domain && <span>{bookmark.domain}</span>}
+            {bookmark.readTimeMinutes && (
+              <>
+                <span>·</span>
+                <span>{bookmark.readTimeMinutes} min read</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Article content or fallback */}
+        {content ? (
+          <div
+            className="prose prose-invert prose-neutral max-w-none"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        ) : (
+          <div className="text-center py-16 space-y-4">
+            <p className="text-neutral-400 text-sm">
+              Article content wasn&apos;t saved — open the original instead.
+            </p>
+            <a
+              href={bookmark.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition-colors"
+            >
+              Open original article ↗
+            </a>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
