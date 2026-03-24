@@ -7,4 +7,4 @@ dist/
 .wxt/
 *.js.map
 pgdata/
-*/.DS_Store
+.DS_Store
