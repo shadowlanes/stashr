@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth, useClerk, SignIn } from '@clerk/chrome-extension';
+import { useAuth, useClerk } from '@clerk/chrome-extension';
 import { ExtensionApiClient } from '../../utils/api';
 import type { ParsedArticle } from '../content';
 
@@ -215,9 +215,25 @@ export default function App() {
   }
 
   if (state.status === 'unauthenticated') {
+    const webAppUrl = import.meta.env['VITE_WEB_APP_URL'] ?? 'http://localhost:4103';
     return (
-      <div style={{ padding: 16 }}>
-        <SignIn routing="hash" />
+      <div style={{ padding: 20, textAlign: 'center' }}>
+        <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Stashr</p>
+        <p style={{ color: '#737373', fontSize: 13, marginBottom: 16 }}>
+          Sign in to start saving articles.
+        </p>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            chrome.tabs.create({ url: `${webAppUrl}/sign-in` });
+            window.close();
+          }}
+        >
+          Sign in via Stashr →
+        </button>
+        <p style={{ color: '#525252', fontSize: 11, marginTop: 10 }}>
+          After signing in, click the extension again.
+        </p>
       </div>
     );
   }
