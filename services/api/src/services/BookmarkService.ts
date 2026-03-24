@@ -31,6 +31,13 @@ export class BookmarkService {
     private readonly r2BucketName: string,
   ) {}
 
+  async findExistingByUrl(userId: string, url: string): Promise<BookmarkWithTags | undefined> {
+    const baseUrl = url.split('?')[0]!;
+    const existing = await this.bookmarkRepository.findByBaseUrl(userId, baseUrl);
+    if (!existing) return undefined;
+    return this.bookmarkRepository.findById(existing.id, userId);
+  }
+
   async save(input: SaveBookmarkInput): Promise<BookmarkWithTags> {
     const bookmark = await this.bookmarkRepository.create({
       userId: input.userId,

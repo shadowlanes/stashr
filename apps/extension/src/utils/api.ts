@@ -25,7 +25,7 @@ export class ExtensionApiClient {
     this.token = token;
   }
 
-  async saveBookmark(payload: SaveBookmarkPayload): Promise<SavedBookmark> {
+  async saveBookmark(payload: SaveBookmarkPayload): Promise<{ bookmark: SavedBookmark; alreadyExists: boolean }> {
     const response = await fetch(`${this.baseUrl}/bookmarks`, {
       method: 'POST',
       headers: {
@@ -35,11 +35,17 @@ export class ExtensionApiClient {
       body: JSON.stringify(payload),
     });
 
+    if (response.status === 202) {
+      const bookmark = await response.json() as SavedBookmark;
+      return { bookmark, alreadyExists: true };
+    }
+
     if (!response.ok) {
       const err = await response.json().catch(() => ({ error: 'Unknown error' }));
       throw new Error((err as { error: string }).error ?? 'Failed to save bookmark');
     }
 
-    return response.json() as Promise<SavedBookmark>;
+    const bookmark = await response.json() as SavedBookmark;
+    return { bookmark, alreadyExists: false };
   }
 }

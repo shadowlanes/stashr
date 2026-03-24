@@ -1,4 +1,4 @@
-import { and, eq, ilike, desc } from 'drizzle-orm';
+import { and, eq, ilike, desc, sql } from 'drizzle-orm';
 import { bookmarks, bookmarkTags, type Bookmark, type NewBookmark, type DrizzleClient } from '@stashr/db';
 
 export interface BookmarkWithTags extends Bookmark {
@@ -27,6 +27,20 @@ function toBookmarkWithTags(row: BookmarkWithRelations): BookmarkWithTags {
 
 export class BookmarkRepository {
   constructor(private readonly db: DrizzleClient) {}
+
+  async findByBaseUrl(userId: string, baseUrl: string): Promise<Bookmark | undefined> {
+    const [row] = await this.db
+      .select()
+      .from(bookmarks)
+      .where(
+        and(
+          eq(bookmarks.userId, userId),
+          eq(sql`split_part(${bookmarks.url}, '?', 1)`, baseUrl),
+        ),
+      )
+      .limit(1);
+    return row;
+  }
 
   async create(data: NewBookmark): Promise<Bookmark> {
     const [bookmark] = await this.db.insert(bookmarks).values(data).returning();

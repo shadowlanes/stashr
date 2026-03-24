@@ -9,7 +9,7 @@ type State =
   | { status: 'parsing' }
   | { status: 'preview'; article: ParsedArticle; url: string; tabId: number }
   | { status: 'saving' }
-  | { status: 'saved' }
+  | { status: 'saved'; alreadyExists: boolean }
   | { status: 'error'; message: string };
 
 async function getActiveTab(): Promise<chrome.tabs.Tab> {
@@ -53,11 +53,13 @@ function ErrorView({ message, onRetry }: { message: string; onRetry: () => void 
   );
 }
 
-function SavedView({ onOpenApp }: { onOpenApp: () => void }) {
+function SavedView({ alreadyExists, onOpenApp }: { alreadyExists: boolean; onOpenApp: () => void }) {
   return (
     <div style={{ padding: 20, textAlign: 'center' }}>
-      <div style={{ fontSize: 28, marginBottom: 8 }}>✓</div>
-      <p style={{ color: '#4ade80', fontWeight: 500, marginBottom: 12 }}>Saved to Stashr!</p>
+      <div style={{ fontSize: 28, marginBottom: 8 }}>{alreadyExists ? '📌' : '✓'}</div>
+      <p style={{ color: alreadyExists ? '#facc15' : '#4ade80', fontWeight: 500, marginBottom: 12 }}>
+        {alreadyExists ? 'Already in your Stashr!' : 'Saved to Stashr!'}
+      </p>
       <button className="btn-secondary" onClick={onOpenApp} style={{ fontSize: 12 }}>
         Open reading list ↗
       </button>
@@ -193,7 +195,7 @@ export default function App() {
       if (!token) throw new Error('Not authenticated');
 
       const client = new ExtensionApiClient(token);
-      await client.saveBookmark({
+      const { alreadyExists } = await client.saveBookmark({
         url,
         title: article.title,
         description: article.description ?? undefined,
@@ -204,7 +206,7 @@ export default function App() {
         content: article.content,
       });
 
-      setState({ status: 'saved' });
+      setState({ status: 'saved', alreadyExists });
     } catch (err) {
       setState({ status: 'error', message: err instanceof Error ? err.message : 'Save failed' });
     }
@@ -251,7 +253,7 @@ export default function App() {
   }
 
   if (state.status === 'saved') {
-    return <SavedView onOpenApp={handleOpenApp} />;
+    return <SavedView alreadyExists={state.alreadyExists} onOpenApp={handleOpenApp} />;
   }
 
   if (state.status === 'preview' || state.status === 'saving') {

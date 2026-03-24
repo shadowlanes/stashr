@@ -46,6 +46,14 @@ export async function bookmarkRoutes(
     const body = saveBookmarkSchema.safeParse(request.body);
     if (!body.success) return reply.status(400).send({ error: body.error.flatten() });
 
+    const existing = await bookmarkService.findExistingByUrl(
+      request.auth.dbUser.id,
+      body.data.url,
+    );
+    if (existing) {
+      return reply.status(202).send(existing);
+    }
+
     const bookmark = await bookmarkService.save({
       userId: request.auth.dbUser.id,
       ...body.data,
