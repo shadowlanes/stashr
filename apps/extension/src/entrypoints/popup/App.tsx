@@ -8,7 +8,7 @@ type State =
   | { status: 'unauthenticated' }
   | { status: 'parsing' }
   | { status: 'preview'; article: ParsedArticle; url: string; tabId: number }
-  | { status: 'saving' }
+  | { status: 'saving'; article: ParsedArticle; url: string }
   | { status: 'saved'; alreadyExists: boolean }
   | { status: 'error'; message: string };
 
@@ -189,7 +189,7 @@ export default function App() {
     if (state.status !== 'preview') return;
     const { article, url } = state;
 
-    setState({ status: 'saving' });
+    setState({ status: 'saving', article, url });
     try {
       const token = await getToken();
       if (!token) throw new Error('Not authenticated');
@@ -257,11 +257,10 @@ export default function App() {
   }
 
   if (state.status === 'preview' || state.status === 'saving') {
-    const preview = state.status === 'preview' ? state : null;
     return (
       <PreviewView
-        article={preview ? preview.article : (state as never)}
-        url={preview ? preview.url : ''}
+        article={state.article}
+        url={state.url}
         onSave={handleSave}
         onCancel={window.close}
         saving={state.status === 'saving'}
