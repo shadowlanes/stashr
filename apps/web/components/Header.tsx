@@ -13,10 +13,10 @@ export function Header() {
   ];
 
   return (
-    <header className="border-b border-neutral-800 bg-neutral-950 sticky top-0 z-10">
+    <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-semibold tracking-tight text-white">
+          <Link href="/" className="text-lg font-semibold tracking-tight text-red-500">
             Stashr
           </Link>
           <nav className="flex gap-1">
@@ -26,8 +26,8 @@ export function Header() {
                 href={item.href}
                 className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
                   pathname === item.href
-                    ? 'bg-neutral-800 text-white'
-                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+                    ? 'bg-red-50 text-red-600 font-medium'
+                    : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
                 }`}
               >
                 {item.label}

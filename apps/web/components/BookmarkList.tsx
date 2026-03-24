@@ -56,19 +56,19 @@ export function BookmarkList({ archived = false }: BookmarkListProps) {
         placeholder="Search bookmarks..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-600"
+        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-200"
       />
 
       {loading && (
-        <div className="text-center py-12 text-neutral-500 text-sm">Loading...</div>
+        <div className="text-center py-12 text-gray-400 text-sm">Loading...</div>
       )}
 
       {error && (
-        <div className="text-center py-12 text-red-400 text-sm">{error}</div>
+        <div className="text-center py-12 text-red-500 text-sm">{error}</div>
       )}
 
       {!loading && !error && bookmarks.length === 0 && (
-        <div className="text-center py-12 text-neutral-500 text-sm">
+        <div className="text-center py-12 text-gray-400 text-sm">
           {archived ? 'Nothing archived yet.' : 'No bookmarks yet — save something from the extension!'}
         </div>
       )}

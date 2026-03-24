@@ -38,7 +38,7 @@ async function parseActiveTab(tabId: number): Promise<ParsedArticle | null> {
 
 function LoadingView() {
   return (
-    <div style={{ padding: 20, textAlign: 'center', color: '#737373', fontSize: 13 }}>
+    <div style={{ padding: 20, textAlign: 'center', color: '#9ca3af', fontSize: 13 }}>
       Loading...
     </div>
   );
@@ -47,7 +47,7 @@ function LoadingView() {
 function ErrorView({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div style={{ padding: 16 }}>
-      <p style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{message}</p>
+      <p style={{ color: '#ef4444', fontSize: 13, marginBottom: 12 }}>{message}</p>
       <button className="btn-secondary" onClick={onRetry}>Try again</button>
     </div>
   );
@@ -57,7 +57,7 @@ function SavedView({ alreadyExists, onOpenApp }: { alreadyExists: boolean; onOpe
   return (
     <div style={{ padding: 20, textAlign: 'center' }}>
       <div style={{ fontSize: 28, marginBottom: 8 }}>{alreadyExists ? '📌' : '✓'}</div>
-      <p style={{ color: alreadyExists ? '#facc15' : '#4ade80', fontWeight: 500, marginBottom: 12 }}>
+      <p style={{ color: alreadyExists ? '#d97706' : '#16a34a', fontWeight: 500, marginBottom: 12 }}>
         {alreadyExists ? 'Already in your Stashr!' : 'Saved to Stashr!'}
       </p>
       <button className="btn-secondary" onClick={onOpenApp} style={{ fontSize: 12 }}>
@@ -84,7 +84,7 @@ function PreviewView({
     <div style={{ padding: 16 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ fontWeight: 700, fontSize: 15, color: '#fff', letterSpacing: '-0.3px' }}>
+        <span style={{ fontWeight: 700, fontSize: 15, color: '#ef4444', letterSpacing: '-0.3px' }}>
           Stashr
         </span>
       </div>
@@ -92,17 +92,17 @@ function PreviewView({
       {/* Article preview */}
       <div
         style={{
-          background: '#171717',
+          background: '#f9fafb',
           borderRadius: 8,
           padding: 12,
           marginBottom: 12,
-          border: '1px solid #262626',
+          border: '1px solid #e5e7eb',
         }}
       >
         <p
           style={{
             fontWeight: 500,
-            color: '#fff',
+            color: '#111827',
             lineHeight: 1.4,
             marginBottom: 6,
             display: '-webkit-box',
@@ -113,13 +113,13 @@ function PreviewView({
         >
           {article.title}
         </p>
-        <p style={{ color: '#737373', fontSize: 12 }}>
+        <p style={{ color: '#9ca3af', fontSize: 12 }}>
           {new URL(url).hostname} · {article.readTimeMinutes} min read · {article.wordCount.toLocaleString()} words
         </p>
         {article.description && (
           <p
             style={{
-              color: '#a3a3a3',
+              color: '#6b7280',
               fontSize: 12,
               marginTop: 6,
               lineHeight: 1.4,
@@ -228,8 +228,8 @@ export default function App() {
     const webAppUrl = import.meta.env['VITE_WEB_APP_URL'] ?? 'http://localhost:4103';
     return (
       <div style={{ padding: 20, textAlign: 'center' }}>
-        <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Stashr</p>
-        <p style={{ color: '#737373', fontSize: 13, marginBottom: 16 }}>
+        <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 6, color: '#ef4444' }}>Stashr</p>
+        <p style={{ color: '#9ca3af', fontSize: 13, marginBottom: 16 }}>
           Sign in to start saving articles.
         </p>
         <button
@@ -241,7 +241,7 @@ export default function App() {
         >
           Sign in via Stashr →
         </button>
-        <p style={{ color: '#525252', fontSize: 11, marginTop: 10 }}>
+        <p style={{ color: '#9ca3af', fontSize: 11, marginTop: 10 }}>
           After signing in, click the extension again.
         </p>
       </div>

@@ -16,9 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html
         lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-gray-50`}
       >
-        <body className="min-h-full bg-neutral-950 text-neutral-100 flex flex-col">
+        <body className="min-h-full bg-gray-50 text-gray-800 flex flex-col">
           {children}
         </body>
       </html>
