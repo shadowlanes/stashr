@@ -83,7 +83,8 @@ function PreviewView({
   return (
     <div style={{ padding: 16 }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+        <img src="/logo.svg" alt="Stashr" width={22} height={22} />
         <span style={{ fontWeight: 700, fontSize: 15, color: '#ef4444', letterSpacing: '-0.3px' }}>
           Stashr
         </span>
@@ -228,6 +229,7 @@ export default function App() {
     const webAppUrl = import.meta.env['VITE_WEB_APP_URL'] ?? 'http://localhost:4103';
     return (
       <div style={{ padding: 20, textAlign: 'center' }}>
+        <img src="/logo.svg" alt="Stashr" width={32} height={32} style={{ marginBottom: 4 }} />
         <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 6, color: '#ef4444' }}>Stashr</p>
         <p style={{ color: '#9ca3af', fontSize: 13, marginBottom: 16 }}>
           Sign in to start saving articles.

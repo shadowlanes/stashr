@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
@@ -16,7 +17,8 @@ export function Header() {
     <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-lg font-semibold tracking-tight text-red-500">
+          <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight text-red-500">
+            <Image src="/logo.svg" alt="Stashr" width={28} height={28} />
             Stashr
           </Link>
           <nav className="flex gap-1">
