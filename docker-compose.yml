@@ -16,6 +16,37 @@ services:
       timeout: 5s
       retries: 10
 
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    ports:
+      - "4104:9000"   # S3-compatible API
+      - "4105:9001"   # MinIO web console
+    environment:
+      MINIO_ROOT_USER: stashr
+      MINIO_ROOT_PASSWORD: stashr123
+    command: server /data --console-address ":9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-shot container that creates the bucket on first run
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 stashr stashr123 &&
+        mc mb --ignore-existing local/stashr-articles &&
+        echo 'Bucket ready.'
+      "
+
   api:
     build:
       context: .
@@ -25,6 +56,8 @@ services:
       - "4101:4101"
     depends_on:
       postgres:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     env_file:
       - services/api/.env
@@ -50,3 +83,4 @@ services:
 
 volumes:
   pgdata:
+  miniodata:

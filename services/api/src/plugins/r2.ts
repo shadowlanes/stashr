@@ -9,6 +9,8 @@ declare module 'fastify' {
 }
 
 export const r2Plugin = fp(async (app: FastifyInstance) => {
+  const isLocal = app.config.r2.endpoint.startsWith('http://');
+
   const client = new S3Client({
     region: 'auto',
     endpoint: app.config.r2.endpoint,
@@ -16,6 +18,8 @@ export const r2Plugin = fp(async (app: FastifyInstance) => {
       accessKeyId: app.config.r2.accessKeyId,
       secretAccessKey: app.config.r2.secretAccessKey,
     },
+    // MinIO requires path-style; R2 uses virtual-hosted (default)
+    forcePathStyle: isLocal,
   });
 
   app.decorate('s3', client);
